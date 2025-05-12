@@ -1,0 +1,33 @@
+def is_safe(board, row, col):
+    for i in range(row):
+        if board[i] == col or \
+           board[i] - i == col - row or \
+           board[i] + i == col + row:
+            return False
+    return True
+
+def solve_n_queens(board, row, solutions):
+    if row == 8:
+        solutions.append(board[:])
+        return
+    for col in range(8):
+        if is_safe(board, row, col):
+            board[row] = col
+            solve_n_queens(board, row + 1, solutions)
+
+def print_solution(board):
+    for row in board:
+        line = ['.'] * 8
+        line[row] = 'Q'
+        print(' '.join(line))
+    print()
+
+# MAIN
+board = [-1] * 8
+solutions = []
+solve_n_queens(board, 0, solutions)
+
+print(f"Total Solutions Found: {len(solutions)}\n")
+for i, sol in enumerate(solutions[:3], 1):  # Only printing first 3
+    print(f"Solution {i}:")
+    print_solution(sol)
