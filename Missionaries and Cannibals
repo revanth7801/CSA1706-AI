@@ -1,0 +1,47 @@
+from collections import deque
+
+def is_valid(m, c):
+    return (m == 0 or m >= c) and (3 - m == 0 or 3 - m >= 3 - c)
+
+def get_successors(state):
+    m, c, b = state
+    moves = [(1,0), (2,0), (0,1), (0,2), (1,1)]
+    successors = []
+    for dm, dc in moves:
+        if b == 1:
+            new_m, new_c = m - dm, c - dc
+            new_b = 0
+        else:
+            new_m, new_c = m + dm, c + dc
+            new_b = 1
+        if 0 <= new_m <= 3 and 0 <= new_c <= 3 and is_valid(new_m, new_c):
+            successors.append((new_m, new_c, new_b))
+    return successors
+
+def bfs():
+    start = (3, 3, 1)
+    goal = (0, 0, 0)
+    visited = set()
+    queue = deque([(start, [])])
+    while queue:
+        state, path = queue.popleft()
+        if state in visited:
+            continue
+        visited.add(state)
+        path = path + [state]
+        if state == goal:
+            return path
+        for succ in get_successors(state):
+            queue.append((succ, path))
+    return None
+
+# MAIN
+solution = bfs()
+
+if solution:
+    print("\nSteps to solve Missionaries and Cannibals Problem:")
+    for i, (m, c, b) in enumerate(solution):
+        side = 'Left' if b == 1 else 'Right'
+        print(f"Step {i}: Missionaries={m}, Cannibals={c}, Boat={side}")
+else:
+    print("No solution found.")
