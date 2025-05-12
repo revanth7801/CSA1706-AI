@@ -1,0 +1,28 @@
+def alphabeta(depth, node_index, is_maximizing, values, alpha, beta):
+    if depth == 3:
+        return values[node_index]
+    
+    if is_maximizing:
+        best = float('-inf')
+        for i in range(2):
+            val = alphabeta(depth + 1, node_index * 2 + i, False, values, alpha, beta)
+            best = max(best, val)
+            alpha = max(alpha, best)
+            if beta <= alpha:
+                break  # Beta cut-off
+        return best
+    else:
+        best = float('inf')
+        for i in range(2):
+            val = alphabeta(depth + 1, node_index * 2 + i, True, values, alpha, beta)
+            best = min(best, val)
+            beta = min(beta, best)
+            if beta <= alpha:
+                break  # Alpha cut-off
+        return best
+
+# Tree: depth = 3, so 8 terminal nodes
+values = [3, 5, 6, 9, 1, 2, 0, -1]  # leaf nodes (terminal state values)
+
+optimal = alphabeta(0, 0, True, values, float('-inf'), float('inf'))
+print("Optimal value (with Alpha-Beta Pruning):", optimal)
