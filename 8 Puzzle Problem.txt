@@ -1,0 +1,63 @@
+from collections import deque
+
+def get_input_state(prompt):
+    print(prompt)
+    state = []
+    for i in range(3):
+        row = list(map(int, input(f"Enter row {i+1}: ").split()))
+        state.extend(row)
+    return tuple(state)
+
+def is_goal(state, goal):
+    return state == goal
+
+def get_neighbors(state):
+    neighbors = []
+    idx = state.index(0)
+    row, col = divmod(idx, 3)
+    directions = [(-1,0),(1,0),(0,-1),(0,1)]
+
+    for dr, dc in directions:
+        r, c = row + dr, col + dc
+        if 0 <= r < 3 and 0 <= c < 3:
+            new_idx = r * 3 + c
+            new_state = list(state)
+            new_state[idx], new_state[new_idx] = new_state[new_idx], new_state[idx]
+            neighbors.append(tuple(new_state))
+    return neighbors
+
+def bfs(start, goal):
+    visited = set()
+    queue = deque([(start, [])])
+
+    while queue:
+        state, path = queue.popleft()
+        if state in visited:
+            continue
+        visited.add(state)
+
+        if is_goal(state, goal):
+            return path + [state]
+
+        for neighbor in get_neighbors(state):
+            if neighbor not in visited:
+                queue.append((neighbor, path + [state]))
+    return None
+
+def print_state(state):
+    for i in range(0, 9, 3):
+        print(state[i:i+3])
+    print()
+
+# MAIN
+start_state = get_input_state("Enter initial state (use 0 for blank):")
+goal_state = get_input_state("Enter goal state:")
+
+solution = bfs(start_state, goal_state)
+
+if solution:
+    print(f"\nSolved in {len(solution)-1} moves:")
+    for s in solution:
+        print_state(s)
+else:
+    print("No solution found.")
